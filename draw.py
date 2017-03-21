@@ -1,14 +1,34 @@
 from display import *
 from matrix import *
-
+import math
 
 def add_circle( points, cx, cy, cz, r, step ):
-    pass
+    oldx = r * math.cos(0) + cx
+    oldy = r * math.sin(0) + cy
+    t = step
+    while t < 1.0001:
+        theta = (t) * 2 * math.pi
+        x = r * math.cos(theta) + cx
+        y = r * math.sin(theta) + cy
+        add_edge( points, oldx, oldy, 0, x, y, 0)
+        oldx = x
+        oldy = y
+        t += step
 
-def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):
-    pass
-
-
+def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):    
+    xcoefs = generate_curve_coefs( x0, x1, x2, x3, curve_type )
+    ycoefs = generate_curve_coefs( y0, y1, y2, y3, curve_type )
+    oldx = xcoefs[0][3]
+    oldy = ycoefs[0][3]
+    t = step
+    while (t < 1.0001):
+        x = (xcoefs[0][0] * pow(t, 3)) + (xcoefs[0][1] * pow(t, 2)) + (xcoefs[0][2] * t) + xcoefs[0][3]
+        y = (ycoefs[0][0] * pow(t, 3)) + (ycoefs[0][1] * pow(t, 2)) + (ycoefs[0][2] * t) + ycoefs[0][3]
+        add_edge( points, oldx, oldy, 0, x, y, 0 )
+        t += step
+        oldx = x
+        oldy = y
+        
 
 def draw_lines( matrix, screen, color ):
     if len(matrix) < 2:
